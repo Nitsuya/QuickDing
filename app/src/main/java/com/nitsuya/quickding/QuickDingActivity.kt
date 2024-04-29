@@ -141,6 +141,7 @@ class QuickDingActivity : AppCompatActivity() {
             getSystemService(CompanionDeviceManager::class.java).disassociate(mAssociationInfo!!.id)
             mAssociationInfo = null
         }
+        Shell.cmd("cmd role remove-role-holder android.app.role.COMPANION_DEVICE_APP_STREAMING $packageName").exec()
     }
 
 
@@ -155,12 +156,24 @@ class QuickDingActivity : AppCompatActivity() {
                     .build()
                 , object: CompanionDeviceManager.Callback() {
                     override fun onAssociationCreated(associationInfo: AssociationInfo) = callback(associationInfo)
-                    override fun onFailure(error: CharSequence?) {}
-                    override fun onAssociationPending(intentSender: IntentSender?) {}
+                    override fun onFailure(error: CharSequence?) {
+                        AlertDialog.Builder(this@QuickDingActivity).setTitle("Associate onFailure").setMessage(error ?: "WTF?").setCancelable(false).setPositiveButton("OK") { _, _ ->
+                            finish()
+                        }.show()
+                    }
+                    override fun onAssociationPending(intentSender: IntentSender?) {
+                        AlertDialog.Builder(this@QuickDingActivity).setTitle("Associate onAssociationPending").setMessage("WTF?").setCancelable(false).setPositiveButton("OK") { _, _ ->
+                            finish()
+                        }.show()
+                    }
                 }
                 , null
             )
-        } catch (e : Throwable){}
+        } catch (e : Throwable){
+            AlertDialog.Builder(this).setTitle("Associate Exception").setMessage(e.message).setCancelable(false).setPositiveButton("OK") { _, _ ->
+                finish()
+            }.show()
+        }
     }
 
     private fun createVirtualDevice(associationInfoId : Int) = getSystemService(VirtualDeviceManager::class.java).createVirtualDevice(
