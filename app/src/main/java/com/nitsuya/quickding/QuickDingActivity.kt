@@ -22,6 +22,7 @@ import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.topjohnwu.superuser.Shell
@@ -142,6 +143,7 @@ class QuickDingActivity : AppCompatActivity() {
             mAssociationInfo = null
         }
         Shell.cmd("cmd role remove-role-holder android.app.role.COMPANION_DEVICE_APP_STREAMING $packageName").exec()
+        Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show()
     }
 
 
@@ -180,11 +182,8 @@ class QuickDingActivity : AppCompatActivity() {
         associationInfoId,
         VirtualDeviceParams.Builder().apply {
             setLockState(VirtualDeviceParams.LOCK_STATE_ALWAYS_UNLOCKED)
-            setDevicePolicy(
-                VirtualDeviceParams.POLICY_TYPE_RECENTS,
-                VirtualDeviceParams.DEVICE_POLICY_DEFAULT
-            )
-            setDevicePolicy(VirtualDeviceParams.POLICY_TYPE_RECENTS, VirtualDeviceParams.DEVICE_POLICY_CUSTOM)
+            setDevicePolicy(VirtualDeviceParams.POLICY_TYPE_RECENTS, VirtualDeviceParams.DEVICE_POLICY_DEFAULT)
+//            setDevicePolicy(VirtualDeviceParams.POLICY_TYPE_RECENTS, VirtualDeviceParams.DEVICE_POLICY_CUSTOM)
             setBlockedCrossTaskNavigations(mutableSetOf())
             setBlockedActivities(mutableSetOf())
         }.build()
