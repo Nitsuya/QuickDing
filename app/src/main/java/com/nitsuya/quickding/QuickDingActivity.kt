@@ -22,7 +22,6 @@ import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.topjohnwu.superuser.Shell
@@ -119,9 +118,8 @@ class QuickDingActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         Shell.cmd("am force-stop com.alibaba.android.rimet").exec()
         if(mVirtualTouchscreen != null){
             mVirtualTouchscreen!!.close()
@@ -142,8 +140,11 @@ class QuickDingActivity : AppCompatActivity() {
             getSystemService(CompanionDeviceManager::class.java).disassociate(mAssociationInfo!!.id)
             mAssociationInfo = null
         }
+        Shell.cmd("am stack remove \$(dumpsys activity recents | grep \"* Recent\" | grep \"Task{\" | grep \":com.alibaba.android.rimet}\" | grep \"#[0-9]*\" -o | sed -n '2p' | grep \"[0-9]*\" -o)").exec()
+        //shell force close app
         Shell.cmd("cmd role remove-role-holder android.app.role.COMPANION_DEVICE_APP_STREAMING $packageName").exec()
-        Toast.makeText(this, "onDestroy", Toast.LENGTH_LONG).show()
+        //be of no effect
+        finish()
     }
 
 
