@@ -141,8 +141,8 @@ class QuickDingActivity : AppCompatActivity() {
             mAssociationInfo = null
         }
         Shell.cmd("am stack remove \$(dumpsys activity recents | grep \"* Recent\" | grep \"Task{\" | grep \":com.alibaba.android.rimet}\" | grep \"#[0-9]*\" -o | sed -n '2p' | grep \"[0-9]*\" -o)").exec()
-        //shell force close app
-        Shell.cmd("cmd role remove-role-holder android.app.role.COMPANION_DEVICE_APP_STREAMING $packageName").exec()
+        //shell remove role force close app
+        Shell.cmd("cmd role remove-role-holder android.app.role.COMPANION_DEVICE_APP_STREAMING $packageName && am stack remove \$(dumpsys activity recents | grep \"* Recent\" | grep \"Task{\" | grep \":$packageName}\" | grep \"#[0-9]*\" -o | sed -n '2p' | grep \"[0-9]*\" -o)").exec()
         //be of no effect
         finish()
     }
