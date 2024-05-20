@@ -21,7 +21,9 @@ import android.os.Vibrator
 import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
+import android.view.WindowManager
 import android.widget.EditText
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.topjohnwu.superuser.Shell
@@ -35,6 +37,8 @@ class QuickDingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.activity_quick_ding)
         setShowWhenLocked(true)
         getSystemService(KeyguardManager::class.java).requestDismissKeyguard(this, null)
@@ -118,8 +122,8 @@ class QuickDingActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         Shell.cmd("am force-stop com.alibaba.android.rimet").exec()
         if(mVirtualTouchscreen != null){
             mVirtualTouchscreen!!.close()
@@ -135,7 +139,6 @@ class QuickDingActivity : AppCompatActivity() {
             mVirtualDevice!!.close()
             mVirtualDevice = null
         }
-
         if(mAssociationInfo != null) {
             getSystemService(CompanionDeviceManager::class.java).disassociate(mAssociationInfo!!.id)
             mAssociationInfo = null
